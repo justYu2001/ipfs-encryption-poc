@@ -8,6 +8,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
+    "start:db": "docker restart ipfs_encryption-poc",
     "init:db": "docker run --name ipfs_encryption-poc -p 3306:3306 -e MYSQL_ROOT_PASSWORD=test -e MYSQL_DATABASE=bei-ke-box -d mysql:8.0"
   },
   "dependencies": {
