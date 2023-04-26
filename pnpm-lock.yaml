@@ -51,6 +51,9 @@ devDependencies:
   '@types/eslint':
     specifier: ^8.21.3
     version: 8.21.3
+  '@types/formidable':
+    specifier: ^2.0.5
+    version: 2.0.5
   '@types/node':
     specifier: ^18.15.5
     version: 18.15.5
@@ -482,6 +485,12 @@ packages:
 
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
+    dev: true
+
+  /@types/formidable@2.0.5:
+    resolution: {integrity: sha512-uvMcdn/KK3maPOaVUAc3HEYbCEhjaGFwww4EsX6IJfWIJ1tzHtDHczuImH3GKdusPnAAmzB07St90uabZeCKPA==}
+    dependencies:
+      '@types/node': 18.15.5
     dev: true
 
   /@types/json-schema@7.0.11:
