@@ -1,8 +1,10 @@
 import type { NextApiHandler } from "next";
 
 import { create } from "ipfs-core";
+import type { Options as IPFSConfig } from "ipfs-core";
 import z from "zod";
 
+import { env } from "@/env.mjs";
 import { getServerAuthSession } from "@/server/auth";
 import { apiHandler } from "@/utils/api-route";
 import { decrypt } from "@/utils/aes";
@@ -29,11 +31,13 @@ const downloadNote: NextApiHandler = async (request, response) => {
         });
     }
 
-    console.log("downloading");
-
     const id = parsedQuery.data.id;
 
-    const node = await create();
+    const ipfsConfig: IPFSConfig | undefined = env.NODE_ENV === "production" ? {
+        repo: "/tmp",
+    } : undefined;
+
+    const node = await create(ipfsConfig);
 
     const stream = node.cat(id);
     await node.stop();
