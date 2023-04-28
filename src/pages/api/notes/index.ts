@@ -3,6 +3,7 @@ import { Writable } from "stream";
 import type { NextApiHandler, NextApiRequest, PageConfig } from "next";
 
 import { create } from "ipfs-core";
+import type { Options as IPFSConfig } from "ipfs-core";
 import formidable from "formidable";
 import type { Fields, Files, Options } from "formidable";
 
@@ -22,7 +23,11 @@ const uploadNote: NextApiHandler = async (request, response) => {
         return response.status(401).end();
     }
 
-    const node = await create();
+    const ipfsConfig: IPFSConfig | undefined = env.NODE_ENV === "production" ? {
+        repo: "/tmp",
+    } : undefined;
+
+    const node = await create(ipfsConfig);
 
     const chunks: never[] = [];
     let fileExtension = "";
@@ -72,7 +77,6 @@ const formdiableConfig: Options = {
     maxFields: 7,
     allowEmptyFiles: false,
     multiples: false,
-    uploadDir: env.NODE_ENV === "production" ? "/tmp" : "",
 };
 
 interface FormdiablePromise {
