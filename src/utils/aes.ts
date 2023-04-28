@@ -23,5 +23,5 @@ export const decrypt = (data: string) => {
     const decipher = createDecipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
     let decryptedData = decipher.update(encryptedData);
     decryptedData = Buffer.concat([decryptedData, decipher.final()]);
-    return decryptedData.toString();
+    return decryptedData;
 }

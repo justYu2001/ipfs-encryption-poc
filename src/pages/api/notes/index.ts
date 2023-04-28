@@ -9,14 +9,9 @@ import type { Fields, Files, Options } from "formidable";
 import { getServerAuthSession } from "@/server/auth"; 
 import { prisma } from "@/server/db";
 import { encrypt } from "@/utils/aes";
+import { apiHandler } from "@/utils/api-route";
 
-const notesApiHandler: NextApiHandler = async (request, response) => {
-    const { method } = request;
-
-    if (method !== "POST" && method !== "GET") {
-        return response.status(405).end();
-    }
-
+const uploadNote: NextApiHandler = async (request, response) => {
     const session = await getServerAuthSession({
         req: request,
         res: response,
@@ -26,42 +21,42 @@ const notesApiHandler: NextApiHandler = async (request, response) => {
         return response.status(401).end();
     }
 
+    const node = await create();
 
-    try {
-        const node = await create();
+    const chunks: never[] = [];
+    let fileExtension = "";
 
-        const chunks: never[] = [];
+    await formdiablePromise(request, {
+        ...formdiableConfig,
+        fileWriteStreamHandler: () => fileConsumer(chunks),
+        filename: (name, extension) => {
+            fileExtension = extension;
+            return `${name}.${extension}`;
+        },
+    });
 
-        await formdiablePromise(request, {
-            ...formdiableConfig,
-            fileWriteStreamHandler: () => fileConsumer(chunks),
-        });
+    const fileData = Buffer.concat(chunks);
+    const encryptedFile = encrypt(fileData);
 
-        const fileData = Buffer.concat(chunks);
-        const encryptedFile = encrypt(fileData);
+    const file = await node.add(encryptedFile);
+    await node.stop();
 
-        const file = await node.add(encryptedFile);
-
-        await prisma.note.create({
-            data: {
-                id: file.cid.toString(),
-                ownerId: session.user.id
-            }
-        });
-
-        return response.status(204).send({
+    await prisma.note.create({
+        data: {
             id: file.cid.toString(),
-        });
-    } catch (error) {
-        console.log(error);
-        
-        return response.status(500).send({
-            message: "Unknown Error",
-        })
-    }
+            ownerId: session.user.id,
+            fileExtension,
+        }
+    });
+
+    return response.status(200).send({
+        id: file.cid.toString(),
+    });
 };
 
-export default notesApiHandler;
+export default apiHandler({
+    POST: uploadNote,
+});
 
 export const config: PageConfig = {
     api: {
