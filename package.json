@@ -19,6 +19,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "axios": "^1.4.0",
     "form-data": "^4.0.0",
     "formidable": "^3.2.5",
     "ipfs-core": "^0.18.0",
