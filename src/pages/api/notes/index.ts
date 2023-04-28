@@ -6,6 +6,7 @@ import { create } from "ipfs-core";
 import formidable from "formidable";
 import type { Fields, Files, Options } from "formidable";
 
+import { env } from "@/env.mjs";
 import { getServerAuthSession } from "@/server/auth"; 
 import { prisma } from "@/server/db";
 import { encrypt } from "@/utils/aes";
@@ -71,6 +72,7 @@ const formdiableConfig: Options = {
     maxFields: 7,
     allowEmptyFiles: false,
     multiples: false,
+    uploadDir: env.NODE_ENV === "production" ? "/tmp" : "",
 };
 
 interface FormdiablePromise {
