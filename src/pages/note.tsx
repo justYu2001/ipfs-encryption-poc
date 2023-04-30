@@ -3,7 +3,6 @@ import type { FormEvent } from "react";
 import type { NextPage } from "next";
 
 import { useForm } from "react-hook-form";
-import { getQueryKey } from "@trpc/react-query";
 import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 

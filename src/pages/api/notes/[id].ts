@@ -55,7 +55,7 @@ const decryptFile = (data: string) => {
 };
 
 const downloadFileFromIPFS = async (cid: string) => {
-    const node = await create();
+    const node = await create({ repo: "/tmp" });
     
     const stream = node.cat(cid);
     const decoder = new TextDecoder();
