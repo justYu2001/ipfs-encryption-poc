@@ -46,7 +46,7 @@ const downloadNote: NextApiHandler = async (request, response) => {
     for await (const chunk of stream) {
         data += decoder.decode(chunk, { stream: true });
     }
-    void node.stop(); 
+    // void node.stop(); 
     
     const file = decrypt(data);
     response.status(200).send(file);
