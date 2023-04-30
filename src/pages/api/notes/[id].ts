@@ -38,9 +38,9 @@ const downloadNote: NextApiHandler = async (request, response) => {
     } : undefined;
 
     const node = await create(ipfsConfig);
-    await node.stop();
-
+    
     const stream = node.cat(id);
+    await node.stop(); 
     const decoder = new TextDecoder();
     let data = "";
     
