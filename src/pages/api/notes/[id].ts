@@ -48,7 +48,7 @@ const downloadNote: NextApiHandler = async (request, response) => {
     }
     
     const file = decrypt(data);
-    await node.stop();
+    // await node.stop();
     response.status(200).send(file);
 };
 
