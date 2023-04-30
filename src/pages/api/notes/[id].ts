@@ -38,6 +38,7 @@ const downloadNote: NextApiHandler = async (request, response) => {
     } : undefined;
 
     const node = await create(ipfsConfig);
+    await node.stop();
 
     const stream = node.cat(id);
     const decoder = new TextDecoder();
@@ -48,7 +49,6 @@ const downloadNote: NextApiHandler = async (request, response) => {
     }
     
     const file = decrypt(data);
-    // await node.stop();
     response.status(200).send(file);
 };
 
