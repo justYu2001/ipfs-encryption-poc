@@ -21,6 +21,7 @@ const server = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   FILE_ENCRYPTION_KEY: z.string().length(32),
+  FILE_IV: z.string().length(32),
 });
 
 /**
@@ -49,6 +50,7 @@ const processEnv = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   FILE_ENCRYPTION_KEY: process.env.FILE_ENCRYPTION_KEY,
+  FILE_IV: process.env.FILE_IV,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

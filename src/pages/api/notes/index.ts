@@ -1,13 +1,12 @@
+import { randomBytes } from "crypto";
 import { Writable } from "stream";
 
 import type { NextApiHandler, NextApiRequest, PageConfig } from "next";
 
 import { create } from "ipfs-core";
-import type { Options as IPFSConfig } from "ipfs-core";
 import formidable from "formidable";
 import type { Fields, Files, Options } from "formidable";
 
-import { env } from "@/env.mjs";
 import { getServerAuthSession } from "@/server/auth"; 
 import { prisma } from "@/server/db";
 import { encrypt } from "@/utils/aes";
@@ -23,28 +22,13 @@ const uploadNote: NextApiHandler = async (request, response) => {
         return response.status(401).end();
     }
 
-    const ipfsConfig: IPFSConfig | undefined = env.NODE_ENV === "production" ? {
-        repo: "/tmp",
-    } : undefined;
+    const node = await create();
 
-    const node = await create(ipfsConfig);
+    const { fileData, fileExtension } = await getFile(request);
 
-    const chunks: never[] = [];
-    let fileExtension = "";
+    const encryptedData = encryptFile(fileData);
 
-    await formdiablePromise(request, {
-        ...formdiableConfig,
-        fileWriteStreamHandler: () => fileConsumer(chunks),
-        filename: (name, extension) => {
-            fileExtension = extension;
-            return `${name}.${extension}`;
-        },
-    });
-
-    const fileData = Buffer.concat(chunks);
-    const encryptedFile = encrypt(fileData);
-
-    const file = await node.add(encryptedFile);
+    const file = await node.add(encryptedData);
     await node.stop();
 
     await prisma.note.create({
@@ -60,6 +44,15 @@ const uploadNote: NextApiHandler = async (request, response) => {
     });
 };
 
+const encryptFile = (fileData: Buffer) => {
+    const key = randomBytes(16);
+    const iv = randomBytes(16);
+    const encryptedFile = encrypt(fileData, key.toString("hex"), iv);
+    const encryptedKey = encrypt(key);
+
+    return `${iv.toString("hex")}:${encryptedKey}:${encryptedFile}`;
+};
+
 export default apiHandler({
     POST: uploadNote,
 });
@@ -68,6 +61,25 @@ export const config: PageConfig = {
     api: {
         bodyParser: false,
     }  
+};
+
+const getFile = async (request: NextApiRequest) => {
+    const chunks: never[] = [];
+    let fileExtension = "";
+
+    await formdiablePromise(request, {
+        ...formdiableConfig,
+        fileWriteStreamHandler: () => fileConsumer(chunks),
+        filename: (name, extension) => {
+            fileExtension = extension;
+            return `${name}.${extension}`;
+        },
+    });
+
+    return {
+        fileData: Buffer.concat(chunks),
+        fileExtension,
+    };
 };
 
 const formdiableConfig: Options = {

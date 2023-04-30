@@ -30,7 +30,6 @@ const NoteListPage: NextPage = () => {
 export default NoteListPage;
 
 const NoteList = () => {
-    console.log(getQueryKey(api.note));
     const { data: notes, isLoading, isError } = api.note.fetchNotes.useQuery();
 
     if (isLoading) {
