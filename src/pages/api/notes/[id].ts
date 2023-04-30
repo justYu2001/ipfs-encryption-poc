@@ -40,15 +40,15 @@ const downloadNote: NextApiHandler = async (request, response) => {
     const node = await create(ipfsConfig);
 
     const stream = node.cat(id);
-    await node.stop();
     const decoder = new TextDecoder();
     let data = "";
-
+    
     for await (const chunk of stream) {
         data += decoder.decode(chunk, { stream: true });
     }
-
+    
     const file = decrypt(data);
+    await node.stop();
     response.status(200).send(file);
 };
 
