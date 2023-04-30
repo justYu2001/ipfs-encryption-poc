@@ -22,7 +22,7 @@ const uploadNote: NextApiHandler = async (request, response) => {
         return response.status(401).end();
     }
 
-    const node = await create({ repo: "/tmp" });
+    const node = await create();
 
     const { fileData, fileExtension } = await getFile(request);
 
