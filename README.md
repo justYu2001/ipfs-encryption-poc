@@ -1,28 +1,59 @@
-# Create T3 App
+# IPFS Encryption POC
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## 環境建置
 
-## What's next? How do I make an app with this?
+1. 請先安裝 [pnpm](https://pnpm.io/installation) 以及 [Docker](https://docs.docker.com/get-docker/)
+2. clone 本專案
+```bash
+git clone https://github.com/justYu2001/ipfs-encryption-poc.git
+```
+3. 進入專案資料夾
+```bash
+cd ipfs-encryption-poc
+```
+4. 在專案的資料夾新增一個 `.env` 檔，並將以下內容貼上
+```
+# When adding additional environment variables, the schema in "/src/env.mjs"
+# should be updated accordingly.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+# Prisma
+# https://www.prisma.io/docs/reference/database-reference/connection-urls#env
+DATABASE_URL="mysql://root:test@localhost:3306/bei-ke-box"
+# DATABASE_URL='mysql://pcsdchna2sdgc8ixp1dl:pscale_pw_oTHyuVojkRK8h9zWohqmEwaq2FAS5JK1ucwiVhyzsWg@aws.connect.psdb.cloud/ipfs-encryption-poc?sslaccept=strict'
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+# Next Auth
+# You can generate a new secret on the command line with:
+# openssl rand -base64 32
+# https://next-auth.js.org/configuration/options#secret
+# NEXTAUTH_SECRET=""
+NEXTAUTH_URL="http://localhost:3000"
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+# Next Auth Google Provider for development
+GOOGLE_CLIENT_ID="1058650652888-ppshl9erl5467s2tadtaqk07bfitp7ls.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="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"
 
-## Learn More
+# File encryption key
+FILE_ENCRYPTION_KEY="62c0649af65f723b45af03ae535e82c3"
+FILE_IV="39f03adb96dd45d431515b56c30d6ed9"
+```
+5. 安裝所需相依套件
+```bash
+pnpm i
+```
+6. 建立資料庫
+```bash
+pnpm init:db
+```
+7. 初始化資料表
+> :warning: 初始化資料表前請確認資料庫已經可以連線（可以打開 Docker Desktop，看資料庫容器的 Log 訊息確認）
+<img width="1296" alt="image" src="https://user-images.githubusercontent.com/49834964/235348697-80b5885b-9806-44bf-afb9-c51cbc9736c7.png">
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+```bash
+npx prisma db push
+```
+8. 運行程式
+```bash
+pnpm dev
+```
+9. 開啟網頁
+在瀏覽器網址列輸入 http://localhost:3000 就能看到網頁了
